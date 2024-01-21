@@ -27,7 +27,7 @@ function Book(title, publisher, author, pages, status, description = "") {
 
 const library = [
     new Book('The Great Gatsby', 'Charles Scribner`s', 'F. Scott Fitzgerald', 180, 'n'),
-    new Book('To Kill a Mockingbird', 'Grand Central Publishing', 'Harper Lee', 281, 'r'),
+    new Book('Ao Kill a Mockingbird', 'Grand Central Publishing', 'Harper Lee', 281, 'r'),
 ];
 
 let errors = [];
@@ -99,6 +99,7 @@ const listBooks = (option) => {
     errors = [];
 
     const filters = {
+        't': 'title',
         'w': 'publisher',
         'a': 'author',
         'p': 'pages',
@@ -142,6 +143,9 @@ let fillPageBooks = (option) => {
     if (hasErrors)
         return;
 
+    
+    container.innerHTML = '';
+
     books.forEach((book) => {
 
         let bookDiv = document.createElement('a');
@@ -181,6 +185,9 @@ let checkErrors = () => {
 let container = document.querySelector('#container');
 
 document.querySelector('#updateButton').addEventListener('click', () => {
-    container.innerHTML = '';
-    fillPageBooks('w');
-})
+    fillPageBooks('t');
+});
+
+onload = () => {
+    fillPageBooks();
+}
