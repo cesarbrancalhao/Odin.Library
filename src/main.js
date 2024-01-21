@@ -9,14 +9,16 @@
  * @return {string} - Returns the book's data/information.
  */
 
-function Book(title, publisher, author, pages, status) {
+function Book(title, publisher, author, pages, status, description = "") {
 
     this.title = title;
     this.publisher = publisher;
     this.author = author;
     this.pages = pages;
     this.status = status;
-    
+
+    this.description = description;
+
     this.info = () => {
         const read = this.status.includes('r') ? 'read' : 'not read';
         return `${this.title} by ${this.author}, ${this.pages} pages, ${read}.`;
@@ -36,12 +38,14 @@ let errors = [];
  * @param {string} status - The status of the book ('r' for read, 'n' for not read).
  */
 
-let addBook = (title, publisher, author, pages, status) => {
+let addBook = (title, publisher, author, pages, status, description = "") => {
     
-    const valid = validateBook(title, publisher, author, pages, status);
+    errors = [];
+
+    const valid = validateBook(title, publisher, author, pages, status, description);
 
     if (valid === true) {
-        const newBook = new Book(title, publisher, author, pages, status);
+        const newBook = new Book(title, publisher, author, pages, status, description);
         library.push(newBook);
         return;
     }
@@ -55,23 +59,29 @@ let addBook = (title, publisher, author, pages, status) => {
  * @return {Array} errors - If the data is invalid.
  * @return {true} - If the data is valid
  */
-const validateBook = (title, publisher, author, pages, status) => {
+const validateBook = (title, publisher, author, pages, status, description = "") => {
     let valid = true;
 
     if (/[^a-zA-Z.' ]/.test(title))
-        {errors.push("Invalid title."); valid = false;}
+        {errors.push("Invalid characters in title."); valid = false;}
 
     if (/[^a-zA-Z.' ]/.test(publisher))
-        {errors.push("Invalid publisher."); valid = false;}
+        {errors.push("Invalid characters in publisher."); valid = false;}
 
     if (/[^a-zA-Z.' ]/.test(author))
-        {errors.push("Invalid author."); valid = false;}
+        {errors.push("Invalid characters in author."); valid = false;}
 
     if (isNaN(pages) || pages <= 0)
-        {errors.push("Invalid pages."); valid = false;}
+        {errors.push("Invalid number of pages."); valid = false;}
+debugger
+    if (status !== 'r' || status !== 'n')
+        {errors.push("Invalid characters in status."); valid = false;}
 
-    if (status !== 'r' && status !== 'n')
-        {errors.push("Invalid status."); valid = false;}
+    if (/[^a-zA-Z.' ]/.test(description))
+        {errors.push("Invalid characters in description."); valid = false;}
+
+    if (description.length > 100)
+        {errors.push("Too many characters in description."); valid = false;}
 
     return valid ? true : errors;
 };
@@ -85,16 +95,17 @@ const validateBook = (title, publisher, author, pages, status) => {
  */
 
 const listBooks = (option) => {
+    
+    errors = [];
+
     const filters = {
         'w': 'publisher',
         'a': 'author',
         'p': 'pages',
         's': 'status',
     }
-
-    const isValidOption = isValid(option);
     
-    const selectedFilter = isValidOption ? filters[option] : false;
+    const selectedFilter = option === 'd' ? filters[option] : false;
 
     return !selectedFilter ? library : sortBooks(selectedFilter, option);
 };
@@ -114,3 +125,62 @@ const sortBooks = (filter, option) => {
     
     return library.sort((a, b) => a[filter].localeCompare(b[filter]));
 };
+
+
+/**
+ * Update the page's list of books.
+ * 
+ * @param {string} option - The ordering filter of the list.
+ * @function listBooks - Retrieves the list of books.
+ */
+let fillPageBooks = (option) => {
+    
+    let books = listBooks(option);
+
+    let hasErrors = checkErrors();
+
+    if (hasErrors)
+        return;
+
+    books.forEach((book) => {
+
+        let bookDiv = document.createElement('a');
+        bookDiv.classList.add('rounded', 'bg-gray-100', 'p-5', 'm-5', 'shadow-lg', 'hover:bg-blue-400');
+
+        let titleElement = document.createElement('h2');
+        titleElement.classList.add('font-bold', 'text-xl');
+        titleElement.textContent = book.title;
+
+        let authorElement = document.createElement('p');
+        authorElement.textContent = book.author;
+
+        let infoElement = document.createElement('p');
+        infoElement.classList.add('mt-2');
+        infoElement.textContent = book.info();
+
+        bookDiv.appendChild(titleElement);
+        bookDiv.appendChild(authorElement);
+        bookDiv.appendChild(infoElement);
+
+        container.appendChild(bookDiv);
+    })
+};
+
+let checkErrors = () => {
+    if (errors.length > 0) {
+        errors.forEach((error) => {
+            let errorHelper = document.querySelector('#errorHelper');
+            errorHelper.textContent = "";
+            errorHelper.textContent += `${error}\n`;
+        });
+        return true;
+    }
+    return false;
+}
+
+let container = document.querySelector('#container');
+
+document.querySelector('#updateButton').addEventListener('click', () => {
+    container.innerHTML = '';
+    fillPageBooks('w');
+})

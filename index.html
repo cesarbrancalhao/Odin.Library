@@ -10,10 +10,37 @@
 </head>
 <body>
 
-    <!-- tailwind test -->
-    <h1 class="text-3xl font-bold underline text-red-600"> Hello world</h1>
+    <div class="flex justify-center mt-5">
+
+        <button id="updateButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l">
+            Update
+        </button>
+        <button id="addBookButton" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-r">
+            Add Book
+        </button>
+        
+    </div>
+
+    <div class="flex justify-center mt-5">
+    <span id="errorHelper" class="text-red-500"> </span>
+    </div>
+
+    <div id="container" class="grid grid-cols-3 bg-gray-300 mx-10 my-5 p-5 rounded-lg">
+
+        <a href="#" class="rounded bg-gray-100 p-5 m-5 shadow-lg hover:bg-blue-400">
+            <h2 class="font-bold text-xl">Title</h2>
+            <p>Author Name</p>
+            <p class="mt-2"> Description goes here...</p>
+        </a>
+
+        <a href="#" class="rounded bg-gray-100 p-5 m-5 shadow-lg hover:bg-blue-400">
+            <h2 class="font-bold text-xl">Title</h2>
+            <p>Author Name</p>
+            <p class="mt-2"> Description goes here...</p>
+        </a>
+
+    </div>
 
     <script src="./src/main.js"></script>
-    
 </body>
 </html>
