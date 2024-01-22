@@ -1,3 +1,5 @@
+/* --- Book section --- */
+
 /**
  * Creates a new Book object.
  *
@@ -8,7 +10,6 @@
  * @param {string} status - The status of the book ('r' for read, 'n' for not read).
  * @return {string} - Returns the book's data/information.
  */
-
 function Book(title, publisher, author, pages, status, description = "") {
 
     this.title = title;
@@ -32,12 +33,18 @@ const library = [
 
 let errors = [];
 
+const addBookBtn = document.querySelector('#addBookButton');
+
+// Calls addBook modal
+addBookBtn.addEventListener('click', () => {
+    modalAddBook();
+});
+
 /**
  * Adds a book to the library.
  * 
  * @param {string} status - The status of the book ('r' for read, 'n' for not read).
  */
-
 let addBook = (title, publisher, author, pages, status, description = "") => {
     
     errors = [];
@@ -47,45 +54,28 @@ let addBook = (title, publisher, author, pages, status, description = "") => {
     if (valid === true) {
         const newBook = new Book(title, publisher, author, pages, status, description);
         library.push(newBook);
-        return;
+        return true;
     }
 
-    return errors;
+    checkErrors();
+    return false;
 };
 
-/**
- * Validates the book information.
- *
- * @return {Array} errors - If the data is invalid.
- * @return {true} - If the data is valid
- */
-const validateBook = (title, publisher, author, pages, status, description = "") => {
-    let valid = true;
+const modalAddBook = () => {
 
-    if (/[^a-zA-Z.' ]/.test(title))
-        {errors.push("Invalid characters in title."); valid = false;}
+    let modal = document.querySelector('#modalAddBook');
+    modal.classList.remove('hidden');
+    
+} // todo
 
-    if (/[^a-zA-Z.' ]/.test(publisher))
-        {errors.push("Invalid characters in publisher."); valid = false;}
+/* --- List section --- */
 
-    if (/[^a-zA-Z.' ]/.test(author))
-        {errors.push("Invalid characters in author."); valid = false;}
+const container = document.querySelector('#container');
 
-    if (isNaN(pages) || pages <= 0)
-        {errors.push("Invalid number of pages."); valid = false;}
-debugger
-    if (status !== 'r' || status !== 'n')
-        {errors.push("Invalid characters in status."); valid = false;}
-
-    if (/[^a-zA-Z.' ]/.test(description))
-        {errors.push("Invalid characters in description."); valid = false;}
-
-    if (description.length > 100)
-        {errors.push("Too many characters in description."); valid = false;}
-
-    return valid ? true : errors;
-};
-
+// Update list button
+container.addEventListener('click', () => {
+    fillPageBooks('t');
+});
 
 /**
  * Retrieves a list of books.
@@ -93,7 +83,6 @@ debugger
  * @param {string} option - The ordering filter of the list ('w' for publisher, 'a' for author, 'p' for pages, 's' for status).
  * @return {Array} - Returns an array of books.
  */
-
 const listBooks = (option) => {
     
     errors = [];
@@ -118,7 +107,6 @@ const listBooks = (option) => {
  * @param {string} option - The sorting option.
  * @return {Array} - The sorted library of books.
  */
-
 const sortBooks = (filter, option) => {
     
     if (option === 'p')
@@ -170,6 +158,49 @@ let fillPageBooks = (option) => {
     })
 };
 
+
+/* --- Errors section --- */
+
+/**
+ * Validates the book information.
+ *
+ * @return {Array} - If the data is invalid.
+ * @return {true} - If the data is valid
+ */
+const validateBook = (title, publisher, author, pages, status, description = "") => {
+    let valid = true;
+
+    if (/[^a-zA-Z.' ]/.test(title))
+        {errors.push("Invalid characters in title."); valid = false;}
+
+    if (/[^a-zA-Z.' ]/.test(publisher))
+        {errors.push("Invalid characters in publisher."); valid = false;}
+
+    if (/[^a-zA-Z.' ]/.test(author))
+        {errors.push("Invalid characters in author."); valid = false;}
+
+    if (isNaN(pages) || pages <= 0)
+        {errors.push("Invalid number of pages."); valid = false;}
+
+    if (status !== 'r' || status !== 'n')
+        {errors.push("Invalid characters in status."); valid = false;}
+
+    if (/[^a-zA-Z.' ]/.test(description))
+        {errors.push("Invalid characters in description."); valid = false;}
+
+    if (description.length > 100)
+        {errors.push("Too many characters in description."); valid = false;}
+
+    return valid ? true : errors;
+};
+
+
+
+/**
+ * Check if there are errors in the array display them if any.
+ *
+ * @return {boolean} - True if there are errors.
+ */
 let checkErrors = () => {
     if (errors.length > 0) {
         errors.forEach((error) => {
@@ -182,11 +213,8 @@ let checkErrors = () => {
     return false;
 }
 
-let container = document.querySelector('#container');
 
-document.querySelector('#updateButton').addEventListener('click', () => {
-    fillPageBooks('t');
-});
+/* --- Init --- */
 
 onload = () => {
     fillPageBooks();
