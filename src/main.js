@@ -65,8 +65,11 @@ const modalAddBook = () => {
 
     let modal = document.querySelector('#modalAddBook');
     modal.classList.remove('hidden');
-    
-} // todo
+
+    // Add modal here
+
+    modal.classList.add('hidden');
+}
 
 /* --- List section --- */
 
