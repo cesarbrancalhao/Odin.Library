@@ -10,23 +10,65 @@
 </head>
 <body>
 
-    <div class="flex justify-center mt-5">
+    <div class="bg-gray-300 mx-10 my-5 p-5 rounded-lg">
+        <div class="flex justify-center mt-5">
+            <h1 class="font-bold text-5xl">Your Odin Library</h1>
+        </div>
 
-        <button id="updateButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l">
-            Update
-        </button>
-        <button id="addBookButton" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-r">
-            Add Book
-        </button>
+        <div id="openModalForm" class="hidden bg-gray-300 mx-10 my-5 p-5 rounded-lg flex flex-col items-center justify-center">
+            <form id="bookForm">
+
+                <div class="flex flex-col items-center my-5 justify-center">
+                    <label for="title" class="font-bold text-lg">Title:</label>
+                    <input type="text" id="title" name="title" placeholder="Title" required class="border-2 border-gray-300 py-2 px-4 rounded-md">
+
+                    <label for="publisher" class="font-bold text-lg">Publisher:</label>
+                    <input type="text" id="publisher" name="publisher" placeholder="Publisher" required class="border-2 border-gray-300 py-2 px-4 rounded-md">
+
+                    <label for="author" class="font-bold text-lg">Author:</label>
+                    <input type="text" id="author" name="author" placeholder="Author" required class="border-2 border-gray-300 py-2 px-4 rounded-md">
+
+                    <label for="pages" class="font-bold text-lg">Pages:</label>
+                    <input type="number" id="pages" name="pages" placeholder="Pages" required class="border-2 border-gray-300 py-2 px-4 rounded-md">
+
+                    <label for="status" class="font-bold text-lg">Status:</label>
+                    <select id="status" required class="border-2 border-gray-300 py-2 px-4 rounded-md">
+                        <option value="r">Read</option>
+                        <option value="n">Not Read</option>
+                    </select>
+                </div>
+
+                <div class="flex flex-col items-center mb-5 justify-center">
+                    <label for="description" class="font-bold text-lg">Description:</label>
+                    <textarea type="text" id="description" name="description" placeholder="Description" class="border-2 border-gray-300 w-[18em] py-10 px-2 rounded-md"></textarea>
+                </div>
+
+                <div class="flex flex-row items-center justify-center">
+                    <button id="closeModalForm" class="bg-gray-500 hover:bg-gray-700 text-white font-bold mx-2 py-2 px-4 rounded">Close</button>
+                    <input type="submit" value="Submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold mx-2  py-2 px-4 rounded">
+                </div>
+            </form>
+        </div>
         
+
+        <div class="flex justify-center mt-5">
+
+            <button id="updateButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l">
+                Update
+            </button>
+            <button id="addBookButton" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-r">
+                Add Book
+            </button>
+            
+        </div>
+
+        <div class="flex justify-center mt-5">
+        <span id="errorHelper" class="text-red-500"> </span>
+        </div>
+
+        <div id="container" class="grid grid-cols-3"></div>
     </div>
-
-    <div class="flex justify-center mt-5">
-    <span id="errorHelper" class="text-red-500"> </span>
-    </div>
-
-    <div id="container" class="grid grid-cols-3 bg-gray-300 mx-10 my-5 p-5 rounded-lg"></div>
-
+    
     <script src="./src/main.js"></script>
 </body>
 </html>
