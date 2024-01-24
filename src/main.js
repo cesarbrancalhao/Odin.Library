@@ -1,3 +1,5 @@
+/* Sections: Book section, Form section, Errors section, List section, Init */
+
 /* --- Variables --- */
 
 const updateBtn = document.querySelector('#updateButton');
@@ -7,6 +9,8 @@ const bookForm = document.querySelector('#bookForm');
 const closeModalBtn = document.querySelector('#closeModalForm');
 const container = document.querySelector('#container');
 const errorHelper = document.querySelector('#errorHelper');
+const bookModal = document.querySelector('#bookModalView');
+
 let isOpenModal = false;
 let errors = [];
 let library = [
