@@ -4,12 +4,21 @@
 
 const updateBtn = document.querySelector('#updateButton');
 const addBookBtn = document.querySelector('#addBookButton');
-const modal = document.querySelector('#openModalForm');
+
+const modalForm = document.querySelector('#openModalForm');
 const bookForm = document.querySelector('#bookForm');
 const closeModalBtn = document.querySelector('#closeModalForm');
+
 const container = document.querySelector('#container');
 const errorHelper = document.querySelector('#errorHelper');
+
 const bookModal = document.querySelector('#bookModalView');
+const bookTitleV = document.querySelector('#bookViewTitle');
+const bookInfoV = document.querySelector('#bookViewInfo');
+const bookDescV = document.querySelector('#bookViewDescription');
+const closeBookV = document.querySelector('#closeModalView');
+const editBookV = document.querySelector('#editModalView');
+const deleteBook = document.querySelector('#deleteBook');
 
 let isOpenModal = false;
 let errors = [];
@@ -93,7 +102,7 @@ const addBook = (title, publisher, author, pages, status, description = "") => {
 };
 
 /**
- * Opens the modal form by removing the 'hidden' class.
+ * Opens the form modal by removing the 'hidden' class.
  *
  */
 const openModalForm = () => {
@@ -108,7 +117,7 @@ const openModalForm = () => {
     updateBtn.classList.add('hidden');
     addBookBtn.classList.add('hidden');
 
-    modal.classList.remove('hidden');
+    modalForm.classList.remove('hidden');
     isOpenModal = true;
 }
 
@@ -118,7 +127,7 @@ const closeModalForm = () => {
     updateBtn.classList.remove('hidden');
     addBookBtn.classList.remove('hidden');
 
-    modal.classList.add('hidden');
+    modalForm.classList.add('hidden');
     isOpenModal = false;
 }
 
