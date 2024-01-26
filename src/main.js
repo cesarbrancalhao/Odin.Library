@@ -23,8 +23,8 @@ const deleteBook = document.querySelector('#deleteBook');
 let isOpenModal = false;
 let errors = [];
 let library = [
-    new Book('The Great Gatsby', 'Charles Scribner`s', 'F. Scott Fitzgerald', 180, 'n'),
-    new Book('Ao Kill a Mockingbird', 'Grand Central Publishing', 'Harper Lee', 281, 'r'),
+    new Book('The Great Gatsby', 'Charles Scribner`s', 'F. Scott Fitzgerald', 180, 'n', true),
+    new Book('Ao Kill a Mockingbird', 'Grand Central Publishing', 'Harper Lee', 281, 'r', true),
 ];
 
 /* --- Listeners --- */
@@ -62,7 +62,7 @@ bookForm.addEventListener('submit', (event) => {
  * @param {string} status - The status of the book ('r' for read, 'n' for not read).
  * @return {string} - Returns the book's data/information.
  */
-function Book(title, publisher, author, pages, status, description = "") {
+function Book(title, publisher, author, pages, status, description = "", hidden) {
 
     this.title = title;
     this.publisher = publisher;
@@ -71,6 +71,7 @@ function Book(title, publisher, author, pages, status, description = "") {
     this.status = status;
 
     this.description = description;
+    this.hidden = hidden;
 
     this.info = () => {
         const read = this.status.includes('r') ? 'read' : 'not read';
@@ -92,7 +93,7 @@ const addBook = (title, publisher, author, pages, status, description = "") => {
     const valid = validateBook(title, publisher, author, pages, status, description);
 
     if (valid === true) {
-        const newBook = new Book(title, publisher, author, pages, status, description);
+        const newBook = new Book(title, publisher, author, pages, status, description, true);
         library.push(newBook);
         return true;
     }
@@ -235,7 +236,9 @@ const fillPageBooks = () => {
     container.innerHTML = '';
 
     books.forEach((book) => {
-
+        if (book.hidden)
+            return;
+        
         let bookDiv = document.createElement('a');
         bookDiv.classList.add('rounded', 'bg-gray-100', 'p-5', 'm-5', 'shadow-lg', 'hover:bg-blue-400');
 
