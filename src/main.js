@@ -23,8 +23,9 @@ const deleteBook = document.querySelector('#deleteBook');
 let isOpenModal = false;
 let errors = [];
 let library = [
-    new Book('The Great Gatsby', 'Charles Scribner`s', 'F. Scott Fitzgerald', 180, 'n', true),
-    new Book('Ao Kill a Mockingbird', 'Grand Central Publishing', 'Harper Lee', 281, 'r', true),
+    new Book('The Great Gatsby', 'Charles Scribner`s', 'F. Scott Fitzgerald', 180, 'n', '', true, 1),
+    new Book('Ao Kill a Mockingbird', 'Grand Central Publishing', 'Harper Lee', 281, 'r', '', true, 2),
+    new Book('The Catcher in the Rye', 'Little, Brown and Company', 'J. D. Salinger', 277, 'n', '', false, 3),
 ];
 
 /* --- Listeners --- */
@@ -72,6 +73,7 @@ function Book(title, publisher, author, pages, status, description = "", hidden)
 
     this.description = description;
     this.hidden = hidden;
+    this.id = id;
 
     this.info = () => {
         const read = this.status.includes('r') ? 'read' : 'not read';
@@ -93,7 +95,8 @@ const addBook = (title, publisher, author, pages, status, description = "") => {
     const valid = validateBook(title, publisher, author, pages, status, description);
 
     if (valid === true) {
-        const newBook = new Book(title, publisher, author, pages, status, description, true);
+        let id = library.length + 1;
+        const newBook = new Book(title, publisher, author, pages, status, description, true, id);
         library.push(newBook);
         return true;
     }
@@ -236,9 +239,9 @@ const fillPageBooks = () => {
     container.innerHTML = '';
 
     books.forEach((book) => {
-        if (book.hidden)
+        if (!book.hidden)
             return;
-        
+
         let bookDiv = document.createElement('a');
         bookDiv.classList.add('rounded', 'bg-gray-100', 'p-5', 'm-5', 'shadow-lg', 'hover:bg-blue-400');
 
@@ -258,6 +261,10 @@ const fillPageBooks = () => {
         bookDiv.appendChild(infoElement);
 
         container.appendChild(bookDiv);
+
+        bookDiv.addEventListener('click', () => {
+            openBookModal(book.id);
+        })
     });
 };
 
