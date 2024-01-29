@@ -1,9 +1,10 @@
-/* Sections: Book section, Form section, Errors section, List section, Init */
+/* Sections: Book section, Form section, Modal section, Errors section, List section, Init */
 
 /* --- Variables --- */
 
 const updateBtn = document.querySelector('#updateButton');
 const addBookBtn = document.querySelector('#addBookButton');
+const submitBtn = document.querySelector('#submit');
 
 const modalForm = document.querySelector('#openModalForm');
 const bookForm = document.querySelector('#bookForm');
@@ -19,13 +20,22 @@ const bookDescV = document.querySelector('#bookViewDescription');
 const closeBookV = document.querySelector('#closeModalView');
 const editBookV = document.querySelector('#editModalView');
 const deleteBook = document.querySelector('#deleteBook');
+const editBookBtn = document.querySelector('#editBook');
 
+let titleForm = document.querySelector('#title');
+let publisherForm = document.querySelector('#publisher');
+let authorForm = document.querySelector('#author');
+let pagesForm = document.querySelector('#pages');
+let statusForm = document.querySelector('#status');
+let descriptionForm = document.querySelector('#description');
+
+let isEditView = false;
 let isOpenModal = false;
 let errors = [];
 let library = [
-    new Book('The Great Gatsby', 'Charles Scribner`s', 'F. Scott Fitzgerald', 180, 'n', '', true, 1),
-    new Book('Ao Kill a Mockingbird', 'Grand Central Publishing', 'Harper Lee', 281, 'r', '', true, 2),
-    new Book('The Catcher in the Rye', 'Little, Brown and Company', 'J. D. Salinger', 277, 'n', '', false, 3),
+    new Book('The Great Gatsby', 'Charles Scribner`s', 'F. Scott Fitzgerald', 180, 'n', '', false, 0),
+    new Book('Ao Kill a Mockingbird', 'Grand Central Publishing', 'Harper Lee', 281, 'r', '', false, 1),
+    new Book('The Catcher in the Rye', 'Little, Brown and Company', 'J. D. Salinger', 277, 'n', '', true, 2),
 ];
 
 /* --- Listeners --- */
@@ -48,8 +58,15 @@ container.addEventListener('click', () => {
 
 bookForm.addEventListener('submit', (event) => {
     event.preventDefault();
-    submitBook();
 });
+
+closeBookV.addEventListener('click', () => {
+    closeModalBook();
+});
+
+submitBtn.addEventListener('click', () => {
+    submitBook();
+})
 
 /* --- Book section --- */
 
@@ -63,7 +80,7 @@ bookForm.addEventListener('submit', (event) => {
  * @param {string} status - The status of the book ('r' for read, 'n' for not read).
  * @return {string} - Returns the book's data/information.
  */
-function Book(title, publisher, author, pages, status, description = "", hidden) {
+function Book(title, publisher, author, pages, status, description = "", hidden, id) {
 
     this.title = title;
     this.publisher = publisher;
@@ -95,15 +112,57 @@ const addBook = (title, publisher, author, pages, status, description = "") => {
     const valid = validateBook(title, publisher, author, pages, status, description);
 
     if (valid === true) {
-        let id = library.length + 1;
-        const newBook = new Book(title, publisher, author, pages, status, description, true, id);
+        let id = library.length;
+        const newBook = new Book(title, publisher, author, pages, status, description, false, id);
         library.push(newBook);
         return true;
     }
 
     checkErrors();
     return false;
+
 };
+
+/**
+ * Submits a book by retrieving input values from the document, 
+ * adding the book using the addBook function, and updating the page 
+ * with the book list if successful.
+ *
+ * @return {boolean} true and refresh the list if the book is successfully added, false otherwise.
+ */
+const submitBook = () => {
+    const { value: title } = titleForm;
+    const { value: publisher } = publisherForm;
+    const { value: author } = authorForm;
+    const { value: pages } = pagesForm;
+    const { value: status } = statusForm;
+    const { value: description } = descriptionForm;
+
+    const id = library.length;
+
+    const put = addBook(title, publisher, author, pages, status, description, false, id);
+    
+    if (put) {
+        closeModalForm();
+        fillPageBooks();
+        resetForm();
+    }
+
+}
+
+const resetForm = () => {
+    
+    titleForm.value = '';
+    publisherForm.value = '';
+    authorForm.value = '';
+    pagesForm.value = '';
+    statusForm.value = 'r';
+    descriptionForm.value = '';
+
+}
+
+/* --- Modal section --- */
+
 
 /**
  * Opens the form modal by removing the 'hidden' class.
@@ -123,6 +182,7 @@ const openModalForm = () => {
 
     modalForm.classList.remove('hidden');
     isOpenModal = true;
+
 }
 
 const closeModalForm = () => {
@@ -133,41 +193,117 @@ const closeModalForm = () => {
 
     modalForm.classList.add('hidden');
     isOpenModal = false;
+
+    resetForm();
+    fillPageBooks();
+
 }
 
-/**
- * Submits a book by retrieving input values from the document, 
- * adding the book using the addBook function, and updating the page 
- * with the book list if successful.
- *
- * @return {boolean} true and refresh the list if the book is successfully added, false otherwise.
- */
-const submitBook = () => {
-    const { value: title } = document.querySelector('#title');
-    const { value: publisher } = document.querySelector('#publisher');
-    const { value: author } = document.querySelector('#author');
-    const { value: pages } = document.querySelector('#pages');
-    const { value: status } = document.querySelector('#status');
-    const { value: description } = document.querySelector('#description');
+const openModalBook = book => {
 
-    const put = addBook(title, publisher, author, pages, status, description);
-    
-    if (put) {
-        closeModalForm();
-        fillPageBooks();
-        resetForm();
+    if (isOpenModal){
+        closeModalBook();
+        return;
     }
+
+    container.classList.add('hidden');
+    updateBtn.classList.add('hidden');
+    addBookBtn.classList.add('hidden');
+
+    bookModal.classList.remove('hidden');
+    isOpenModal = true;
+
+    bookTitleV.textContent = book.title;
+    bookInfoV.textContent = book.info();
+    bookDescV.textContent = book.description ? book.description : "No description.";
+
+    editBookV.addEventListener('click', () => editModalForm(book, book.id));
+
+    deleteBook.addEventListener('click', () => {
+        library[book.id].hidden = true;
+        closeModalBook();
+    });
+
 }
 
-const resetForm = () => {
-    document.querySelector('#title').value = '';
-    document.querySelector('#publisher').value = '';
-    document.querySelector('#author').value = '';
-    document.querySelector('#pages').value = '';
-    document.querySelector('#status').value = 'n';
-    document.querySelector('#description').value = '';
+const closeModalBook = () => {
+
+    container.classList.remove('hidden');
+    updateBtn.classList.remove('hidden');
+    addBookBtn.classList.remove('hidden');
+
+    bookModal.classList.add('hidden');
+    modalForm.classList.add('hidden');
+    isOpenModal = false;
+    
+    resetForm();
+    fillPageBooks();
+
 }
 
+const editHandler = (id) => {
+
+    editBookBtn.removeEventListener('click', () => editHandler(book, id));
+    editBook(id);
+    closeModalBook();
+
+};
+
+const editModalForm = (book, id) => {
+
+    isEditView = true;
+
+    editBookV.removeEventListener('click', () => editModalForm(book, book.id));
+
+    container.classList.add('hidden');
+    updateBtn.classList.add('hidden');
+    addBookBtn.classList.add('hidden');
+
+    bookModal.classList.add('hidden');
+
+    submitBtn.classList.add('hidden');
+    editBookBtn.classList.remove('hidden');
+    modalForm.classList.remove('hidden');
+    isOpenModal = true;
+    
+    titleForm.value = book.title;
+    publisherForm.value = book.publisher;
+    authorForm.value = book.author;
+    pagesForm.value = book.pages;
+    statusForm.value = book.status;
+    descriptionForm.value = book.description;
+
+    editBookBtn.addEventListener('click', () => editHandler(id));
+
+}
+
+const editBook = (id) => {
+
+    const newBook = new Book(
+        titleForm.value,
+        publisherForm.value,
+        authorForm.value,
+        pagesForm.value,
+        statusForm.value,
+        descriptionForm.value,
+        false,
+        id
+    );
+    
+    errors = [];
+
+    const valid = validateBook(newBook.title, newBook.publisher, newBook.author, newBook.pages, newBook.status, newBook.description);
+
+    if (valid === true) {
+        library[id] = newBook;
+    }
+
+    submitBtn.classList.remove('hidden');
+    editBookBtn.classList.add('hidden');
+    checkErrors();
+    return false;
+    
+}
 
 /* --- Errors section --- */
 
@@ -239,7 +375,7 @@ const fillPageBooks = () => {
     container.innerHTML = '';
 
     books.forEach((book) => {
-        if (!book.hidden)
+        if (book.hidden)
             return;
 
         let bookDiv = document.createElement('a');
@@ -263,9 +399,11 @@ const fillPageBooks = () => {
         container.appendChild(bookDiv);
 
         bookDiv.addEventListener('click', () => {
-            openBookModal(book.id);
+            openModalBook(book);
         })
     });
+
+    isEditView = false;
 };
 
 /* --- Init --- */
