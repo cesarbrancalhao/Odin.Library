@@ -42,6 +42,7 @@ let library = [
 
 updateBtn.addEventListener('click', () => {
     fillPageBooks();
+    cleanErrors();
 })
 
 addBookBtn.addEventListener('click', () => {
@@ -50,10 +51,6 @@ addBookBtn.addEventListener('click', () => {
 
 closeModalBtn.addEventListener('click', () => {
     closeModalForm();
-});
-
-container.addEventListener('click', () => {
-    fillPageBooks();
 });
 
 bookForm.addEventListener('submit', (event) => {
@@ -106,8 +103,8 @@ function Book(title, publisher, author, pages, status, description = "", hidden,
  * @param {string} status - The status of the book ('r' for read, 'n' for not read).
  */
 const addBook = (title, publisher, author, pages, status, description = "") => {
-    
-    errors = [];
+
+    cleanErrors();
 
     const valid = validateBook(title, publisher, author, pages, status, description);
 
@@ -170,6 +167,8 @@ const resetForm = () => {
  */
 const openModalForm = () => {
 
+    cleanErrors();
+
     if (isOpenModal){
         closeModalForm();
         return;
@@ -201,6 +200,8 @@ const closeModalForm = () => {
 
 const openModalBook = book => {
 
+    cleanErrors();
+
     if (isOpenModal){
         closeModalBook();
         return;
@@ -217,12 +218,12 @@ const openModalBook = book => {
     bookInfoV.textContent = book.info();
     bookDescV.textContent = book.description ? book.description : "No description.";
 
-    editBookV.addEventListener('click', () => editModalForm(book, book.id));
+    editBookV.onclick = () => editModalForm(book, book.id);
 
-    deleteBook.addEventListener('click', () => {
+    deleteBook.onclick = () => {
         library[book.id].hidden = true;
         closeModalBook();
-    });
+    };
 
 }
 
@@ -243,8 +244,9 @@ const closeModalBook = () => {
 
 const editHandler = (id) => {
 
-    editBookBtn.removeEventListener('click', () => editHandler(book, id));
     editBook(id);
+    submitBtn.classList.remove('hidden');
+    editBookBtn.classList.add('hidden');
     closeModalBook();
 
 };
@@ -252,8 +254,6 @@ const editHandler = (id) => {
 const editModalForm = (book, id) => {
 
     isEditView = true;
-
-    editBookV.removeEventListener('click', () => editModalForm(book, book.id));
 
     container.classList.add('hidden');
     updateBtn.classList.add('hidden');
@@ -273,39 +273,42 @@ const editModalForm = (book, id) => {
     statusForm.value = book.status;
     descriptionForm.value = book.description;
 
-    editBookBtn.addEventListener('click', () => editHandler(id));
+    editBookBtn.onclick = () => editHandler(id);
 
 }
 
 const editBook = (id) => {
 
+    cleanErrors();
+
     const newBook = new Book(
         titleForm.value,
         publisherForm.value,
         authorForm.value,
-        pagesForm.value,
+        Number(pagesForm.value),
         statusForm.value,
         descriptionForm.value,
         false,
         id
     );
-    
-    errors = [];
 
     const valid = validateBook(newBook.title, newBook.publisher, newBook.author, newBook.pages, newBook.status, newBook.description);
-
     if (valid === true) {
+        cleanErrors();
         library[id] = newBook;
+        return;
     }
 
-    submitBtn.classList.remove('hidden');
-    editBookBtn.classList.add('hidden');
     checkErrors();
-    return false;
     
 }
 
 /* --- Errors section --- */
+
+const cleanErrors = () => {
+    errors = [];
+    errorHelper.textContent = "";
+}
 
 /**
  * Validates the book information.
@@ -347,12 +350,14 @@ const validateBook = (title, publisher, author, pages, status, description = "")
  */
 let checkErrors = () => {
     if (errors.length > 0) {
+        errorHelper.textContent = ""
         errors.forEach((error) => {
-            errorHelper.textContent = "";
-            errorHelper.textContent += `${error}\n`;
+            errorHelper.textContent += `\n${error}\n`;
         });
         return true;
     }
+
+    cleanErrors();
     return false;
 }
 
@@ -370,7 +375,7 @@ const fillPageBooks = () => {
     let hasErrors = checkErrors();
 
     if (hasErrors)
-    {errors = []; return;}
+    {return}
 
     container.innerHTML = '';
 
@@ -396,11 +401,12 @@ const fillPageBooks = () => {
         bookDiv.appendChild(authorElement);
         bookDiv.appendChild(infoElement);
 
+        bookDiv.onclick = () => openModalBook(book);
+
+        bookDiv.id = book.id;
+
         container.appendChild(bookDiv);
 
-        bookDiv.addEventListener('click', () => {
-            openModalBook(book);
-        })
     });
 
     isEditView = false;
