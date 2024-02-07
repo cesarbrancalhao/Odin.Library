@@ -1,4 +1,4 @@
-# Odin.Library
+# Library
 
 Simple book library made with Tailwind and JavaScript.
 
