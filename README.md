@@ -1,6 +1,6 @@
 # Odin.Library
 
-Simple book library made with JavaScript.
+Simple book library made with Tailwind and JavaScript.
 
 Check it [Live](https://cesarbrancalhao.github.io/Odin.Library/).
 
